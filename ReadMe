@@ -1,0 +1,121 @@
+一、Vector 向量容器
+向量是用来实现不同元素共存的变长数组的工具类
+Vector 类可以实现可增长的对象数组
+
+适合用向量类的场景
+a.需要处理的对象数目不定，序列中的元素都是对象或者可以表示为对象
+b.需要将不同类的对象组合成一个数据系列
+c.需要频繁的做对象序列的插入删除操作
+d.经常需要定位序列中的对象或其他查找操作
+e.在不同类之间传递大量的数据
+
+2.创建向量类的对象
+
+Public Vector(int initCapacity,int capacityIncrement);
+Vector v=new Vector(10,5)
+
+3.向量中添加元素
+
+a.addElement(Object obj)
+b.insertElement(Object obj,int index);
+
+4.修改或删除向量序列中的元素
+a.void setElementAt(Object obj,int index)
+b.boolean removeElement(Object obj)
+c.void removeElementAt(int index)
+d.void removeAllElements()
+
+5.查找向量中的元素
+a.Object elementAt(int index)
+b.boolean contains(Object obj)
+c.int indexOf(Object obj,int start_index)
+d.int lastindexOf(Object obj,int start_index)
+
+二、五子棋判输赢
+判断 X=Y 轴上是否形成五子连珠
+判断 X=-Y 轴上是否形成五子连珠
+判断X轴上是否形成五子连珠
+判断Y轴上是否形成五子连珠
+
+记录最后落子位置(int x,int y)
+扫描附件横、竖、斜是否形成五子连珠
+
+victory(int x,int y,Vector contain) 方法用来判输赢
+
+主对角线坐标特点：
+
+(0,0)(1,1)(2,2)(3,3)(4,4)(5,5)(6,6)(7,7)(8,8)(9,9)(10,10)
+(16,0)(15,1)(14,2)(13,3)(12,4)(11,5)(10,6)(9,7)(8,8)(7,9)(6,10)(5,11)(4,12)
+
+总结：主对角线横纵坐标相同，副对角线横纵坐标之和是一个固定值就是棋盘的宽高
+
+
+
+public void mouseClicked(MouseEvent e) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("mouseClicked"+e);  
+        System.out.println(e.BUTTON1);  
+        //1鼠标左键2.鼠标滚轮3.鼠标右键
+        if(e.getButton()==e.BUTTON1){            
+            int x=e.getX();
+            int y=e.getY();
+            System.out.println(x+"-"+y);
+            x=(x-x%w)+(x%w>w/2?w:0);
+            y=(y-y%w)+(y%w>2/2?w:0);
+            System.out.println(x+"--"+y);
+            x=(x-px)/w;
+            y=(y-py)/w;
+            System.out.println(x+"---"+y);
+            //判断棋子是否落到棋盘内
+            if(x>=0&&y>=0&&x<=16&&y<=16){
+                //已经有棋子了
+                if(v.contains(x+"-"+y)){
+                    System.out.println("There are already pieces");                    
+                }else{//没有棋子
+                    v.add(x+"-"+y);
+                    this.repaint();
+                    //黑棋
+                    if(v.size()%2==0){
+                        black.add(x+"-"+y);
+                        this.victory(x, y, black);
+                        System.out.println("black chessman");
+                    }else{//白棋
+                        white.add(x+"-"+y);
+                        this.victory(x, y, white);
+                        System.out.println("white chessman");
+                    }
+                    System.out.println(e.getX()+"-"+e.getY());
+                }
+            }else{
+                System.out.println(e.getX()+"-"+e.getY()+"|"+x+"-"+y+"\t beyond border");
+            }
+        }
+        System.out.println(e.BUTTON3+"++++right mouse");
+        if(e.getButton()==e.BUTTON3){
+            System.out.println("mouse right click - take back");
+            if(v.isEmpty()){
+                JOptionPane.showMessageDialog(this, "No chess piece can repent");
+            }else{
+                //判断是白方悔棋还是黑方悔棋
+                if(v.size()%2==0){//int blackcount,whitecount;//统计悔棋步数
+                    blackcount++;
+                    if(blackcount>3){
+                        JOptionPane.showMessageDialog(this, "Black has repented three moves");
+                    }else{
+                        v.remove(v.lastElement());
+                        this.repaint();
+                    }
+                }else{
+                    whitecount++;
+                    if(whitecount>3){
+                        if(whitecount>3){
+                            JOptionPane.showMessageDialog(this, "White has repented three moves");
+                        }else{
+                            v.remove(v.lastElement());
+                            this.repaint();
+                        }
+                    }
+                }
+            }
+        }
+    }
